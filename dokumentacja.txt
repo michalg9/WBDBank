@@ -1,0 +1,12 @@
+Java Database Connectivity (JDBC) jest interfejsem API Javy, przeznaczonym do komunikacji z bazami danych i umo¿liwiaj¹cym niezale¿ny od producenta dostêp do bazy danych przez standardowy interfejs. JDBC daje aplikacjom Javy mo¿liwoœæ wywo³ywania SQL i PL/SQL. Aplikacje Javy uzyskuj¹ dostêp do bazy danych Oracle, nawi¹zuj¹c po³¹czenie z konkretnym schematem za pomoc¹ jednego ze sterowników JDBC firmy Oracle.
+
+PL/SQL oznacza proceduralny SQL. Jest to rozszerzenie jêzyka SQL umo¿liwiaj¹ce tworzenie konstrukcji takich jak pêtle, instrukcje warunkowe oraz zmienne. Jêzyk ten stanowi wbudowany jêzyk proceduralny baz danych Oracle.
+
+Strony JSP (Java Server Pages)
+Strony JSP s¹ rozwi¹zaniem umo¿liwiaj¹cym tworzenie dynamicznych stron WWW. Umo¿liwiaj¹ one miejszanie standardowego kodu HTML z generowanym dynamicznie (który zamykany jest w specjalnych znacznikach). Strony JSP zapisywane s¹ z rozszerzeniem .jsp. Przy zapytaniu o stronê JSP, jest ona po stronie serwera konwertowana do serwleta. Generowany kod HTML jest drukowany w obiekcie HttpResponse serwletu. 
+
+Strony JSP t³umaczone s¹ na serwlet tylko za pierwszym razem, gdy ktoœ wykonuje do nich zapytanie. Kolejne ¿¹dania u¿ywaj¹ wygenerowanego wczeœniej serwletu.
+
+Zalet¹ stron JSP jest oddzielenie komponentów czo³owych (m.in. interfejsu aplikacji) od wewnêtrznego kodu, odwo³uj¹cego siê do bazy danych. Umo¿liwia to prowadzenie prac nad aplikacj¹ dwukierunkowo: pisz¹c kod JSP/HTML oraz projektuj¹c zapytania do bazy danych w Javie.
+
+Aplikacja zaprojektowana w JSP dzia³a w trybie klient-serwer, gdzie klientem jest dowolna przegl¹darka internetowa. Aplikacja znajduje siê na serwerze. Dziêki temu, w przypadku zmian wewnêtrznych struktur bazy danych nie trzeba u ka¿dego u¿ytkownika aplikacji dokonywaæ aktualizacji. Umo¿liwia to ci¹g³y rozwój aplikacji i dodawanie nowych funkcjonalnoœci do ju¿ dzia³aj¹cej aplikacji w trybie ci¹g³ym. Ponadto, istotn¹ zalet¹ takiego rozwi¹zania jest niezale¿noœæ od platformy - dostêp do aplikacji oraz do bazy danych mo¿emy uzyskaæ z dowolnej przegl¹darki internetowej, a wiêc i z dowolnego systemu operacyjnego.
