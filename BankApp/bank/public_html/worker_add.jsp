@@ -25,7 +25,7 @@
             <input type="text" name="imie"/>
           </td>
         </tr><tr>
-          <td width="50%">Nazwiskotd>
+          <td width="50%">Nazwisko<td>
           <td width="50%">
             <input type="text" name="nazwisko"/>
           </td>

@@ -226,9 +226,73 @@ connHandler.conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONC
         } finally {
             closeAll();
         }
-
-
     }
+     
+  public String addClient(String nazwa, String miejscowosc,
+                                String kodPoczt, String adres, String typ,
+                                String info, String haslo) throws SQLException {
+
+          try {
+              connHandler.getDBConnection();
+              stmt =
+  connHandler.conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
+              System.out.println("\ntyp klienta: " + typ);
+                sqlString =
+                        "INSERT INTO Klient VALUES (PRACOWNIK_SEQ.nextval, '" +
+                        nazwa + "','" + miejscowosc + "','" + kodPoczt + "','" +
+                        adres + "','" +  typ + "', '" +
+                        info + "', '" + haslo + "')";
+              System.out.println("\nInserting: " + sqlString);
+              stmt.execute(sqlString);
+              return "success";
+          } catch (SQLException e) {
+              logException(e);
+              return "failure";
+          } finally {
+              closeAll();
+          }
+      }
+               
+               
+  public ResultSet getUslugaRachunek() throws SQLException {
+      try {
+          connHandler.getDBConnection();
+          stmt =
+  connHandler.conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
+          query = "SELECT nazwa, oprocentowanie " +
+              "FROM UslugaRachunek";
+          
+          System.out.println("\nExecuting query: " + query);
+          rset = stmt.executeQuery(query);
+      } catch (SQLException e) {
+          logException(e);
+      }
+      return rset;
+  }
+  
+  public String addRachunek(int client_id, String uslugaLokata_nazwa, double wplata, String rachunek_numer) 
+    throws SQLException {
+
+      try {
+          connHandler.getDBConnection();
+          stmt =
+  connHandler.conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
+          sqlString =
+                  "INSERT INTO Rachunek VALUES ('" + rachunek_numer + "', '" +
+                  uslugaLokata_nazwa + "' ,'" + client_id + "' , " + wplata + ", CURRENT_DATE)";
+          System.out.println("\nInserting: " + sqlString);
+          stmt.execute(sqlString);
+
+          return "success";
+      } catch (SQLException e) {
+          logException(e);
+          return "failure";
+      } finally {
+          closeAll();
+      }
+  }
+
+
   public void logException(SQLException ex) {
       while (ex != null) {
           ex.printStackTrace();
@@ -273,6 +337,81 @@ connHandler.conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONC
           closeAll();
       }
     }
+  
+  //---------------------------------------------------------
+  //NOWE METODY
+  //--------------------------------------------------------
+  
+  public ResultSet getAllClients() throws SQLException {
+      try {
+          connHandler.getDBConnection();
+          stmt =
+  connHandler.conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
+          query = "SELECT * FROM Klient ORDER BY  ident ";
+          System.out.println("\nExecuting query: " + query);
+          rset = stmt.executeQuery(query);
+      } catch (SQLException e) {
+          logException(e);
+      }
+      return rset;
+  }
+  
+  public ResultSet getClientsByName(String nazwa, String miejscowosc, String kodPoczt, String adres) throws SQLException {
+    
+    if(nazwa == null)
+        nazwa = "";
+    if(miejscowosc == null)
+        miejscowosc = "";
+    if(kodPoczt == null)
+        kodPoczt = "";
+    if(adres == null)
+        adres = "";
+    nazwa = nazwa.toUpperCase();
+    miejscowosc = miejscowosc.toUpperCase();
+    kodPoczt = kodPoczt.toUpperCase();
+    adres = adres.toUpperCase();
+ 
+      try {
+          connHandler.getDBConnection();
+          stmt =
+  connHandler.conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
+          query =
+                  "SELECT * FROM Klient WHERE UPPER(nazwa) LIKE \'%" +
+                  nazwa + "%\'" + " AND UPPER(miejscowosc) LIKE \'%" + miejscowosc +
+                "%' AND UPPER(kodPoczt) LIKE \'%" + kodPoczt +
+                "%' AND UPPER(adres) LIKE \'%" + adres +
+                  "%\' ORDER BY ident";
+
+          System.out.println("\nExecuting query: " + query);
+          rset = stmt.executeQuery(query);
+      } catch (SQLException e) {
+          logException(e);
+      }
+      return rset;
+
+  }
+  
+  public String deleteClientById(int id) throws SQLException {
+      try {
+          connHandler.getDBConnection();
+          stmt =
+  connHandler.conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
+          sqlString = "DELETE FROM Klient WHERE ident = " + id;
+          System.out.println("\nExecuting: " + sqlString);
+
+          stmt.execute(sqlString);
+          return "Success";
+      } catch (SQLException e) {
+          logException(e);
+          return "failure";
+      } finally {
+          closeAll();
+      }
+
+
+  }
+  
+  //------------------------------------------------------------
   
   public void closeAll() {
       if (rset != null) {

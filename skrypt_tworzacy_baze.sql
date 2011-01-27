@@ -80,7 +80,7 @@ PRIMARY KEY(ident),
   FOREIGN KEY(UslugaLokata_nazwa)
     REFERENCES UslugaLokata(nazwa),
   FOREIGN KEY(Klient_ident)
-    REFERENCES Klient(ident));
+    REFERENCES Klient(ident) ON DELETE CASCADE);
 
 
 CREATE INDEX Lokata_FKIndex1 ON Lokata (UslugaLokata_nazwa);
@@ -95,7 +95,7 @@ CREATE TABLE Fundusz (
   zalozona DATE,
 PRIMARY KEY(ident),
   FOREIGN KEY(Klient_ident)
-    REFERENCES Klient(ident),
+    REFERENCES Klient(ident) ON DELETE CASCADE,
   FOREIGN KEY(Inwestycja_nazwa)
     REFERENCES Inwestycja(nazwa));
 
@@ -112,7 +112,7 @@ CREATE TABLE Rachunek (
   otwarty DATE,
 PRIMARY KEY(numer),
   FOREIGN KEY(Klient_ident)
-    REFERENCES Klient(ident),
+    REFERENCES Klient(ident) ON DELETE CASCADE,
   FOREIGN KEY(UslugaRachunek_nazwa)
     REFERENCES UslugaRachunek(nazwa));
 
@@ -146,7 +146,7 @@ CREATE TABLE Kredyt (
   splacone NUMBER(10,2),
 PRIMARY KEY(ident),
   FOREIGN KEY(Klient_ident)
-    REFERENCES Klient(ident),
+    REFERENCES Klient(ident) ON DELETE CASCADE,
   FOREIGN KEY(UslugaKredyt_ident)
     REFERENCES UslugaKredyt(ident),
   FOREIGN KEY(Pracownik_ident)

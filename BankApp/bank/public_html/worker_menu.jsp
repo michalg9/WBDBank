@@ -12,5 +12,6 @@
     <br/>
     <br/>
     <a href="worker_info.jsp" target="MainFrame">Dane Pracownikow</a><br/>
+    <a href="worker_cl_info.jsp" target="MainFrame">Dane Klientow</a><br/>
   </body>
 </html>
