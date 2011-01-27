@@ -68,6 +68,24 @@ connHandler.conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONC
       return rset;
   }
   
+  public ResultSet getLokatyByClientId(int client_id) throws SQLException {
+      try {
+          connHandler.getDBConnection();
+          stmt =
+  connHandler.conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
+          query = "SELECT l.ident, l.uslugalokata_nazwa, l.otwarta, l.wplata, ul.okres, ul.oprocentowanie, ul.opis " +
+              "FROM Lokata l, UslugaLokata ul " +
+              "WHERE  l.uslugalokata_nazwa = ul.nazwa AND " +
+              "l.KLIENT_IDENT = " + client_id;
+          
+          System.out.println("\nExecuting query: " + query);
+          rset = stmt.executeQuery(query);
+      } catch (SQLException e) {
+          logException(e);
+      }
+      return rset;
+  }
+  
   public ResultSet getKredyty() throws SQLException {
       try {
           connHandler.getDBConnection();
@@ -87,6 +105,25 @@ connHandler.conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONC
       return rset;
   }
 
+  public ResultSet getKredytyByClientId(int client_id) throws SQLException {
+      try {
+          connHandler.getDBConnection();
+          stmt =
+  connHandler.conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
+          query = "SELECT uk.nazwa, k.udzielony, k.suma, " +
+                  "uk.oprocentowanie, uk.okres, k.splacone, uk.opis " +
+              "FROM Kredyt k, UslugaKredyt uk " +
+              "WHERE  k.uslugakredyt_ident = uk.ident AND " +
+              "k.KLIENT_IDENT = " + client_id;
+          
+          System.out.println("\nExecuting query: " + query);
+          rset = stmt.executeQuery(query);
+      } catch (SQLException e) {
+          logException(e);
+      }
+      return rset;
+  }
+  
   public ResultSet getFundusze() throws SQLException {
       try {
           connHandler.getDBConnection();
@@ -105,6 +142,26 @@ connHandler.conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONC
       }
       return rset;
   }
+  
+  public ResultSet getFunduszeByClientId(int client_id) throws SQLException {
+      try {
+          connHandler.getDBConnection();
+          stmt =
+  connHandler.conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
+          query = "SELECT i.nazwa, i.prognoza, i.poczatek, i.koniec, i.opis, " +
+                  "f.wplata, f.zalozona " +
+              "FROM Fundusz f, Inwestycja i " +
+              "WHERE  f.inwestycja_nazwa = i.nazwa AND " +
+              "f.KLIENT_IDENT = " + client_id;
+          
+          System.out.println("\nExecuting query: " + query);
+          rset = stmt.executeQuery(query);
+      } catch (SQLException e) {
+          logException(e);
+      }
+      return rset;
+  }
+  
     public ResultSet getLokataById(int ident) throws SQLException {
         try {
             connHandler.getDBConnection();
@@ -275,10 +332,74 @@ connHandler.conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONC
         } finally {
             closeAll();
         }
-
-
     }
+    
+  public String addLokata(int client_id, String uslugaLokata_nazwa, double wplata, String rachunek_numer) 
+    throws SQLException {
 
+      try {
+          connHandler.getDBConnection();
+          stmt =
+  connHandler.conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
+          sqlString =
+                  "INSERT INTO Lokata VALUES (LOKATA_SEQ.nextval, " +
+                  client_id + ",'" + uslugaLokata_nazwa + "', CURRENT_DATE, " + wplata + ")";
+          System.out.println("\nInserting: " + sqlString);
+          stmt.execute(sqlString);
+          
+          
+        DecimalFormat df = new DecimalFormat();
+        DecimalFormatSymbols dfs = df.getDecimalFormatSymbols();
+        // make sure it's a '.'
+        dfs.setDecimalSeparator(',');
+        df.setDecimalFormatSymbols(dfs);
+        sqlString =
+                "INSERT INTO Transakcja VALUES (TRANSAKCJA_SEQ.nextval, '" +  rachunek_numer + "', " + wplata + ",'" + "out" + "', 'brak','" + 
+                "Lokata nr ' || LOKATA_SEQ.currval , 'brak', 'brak', 'brak' , CURRENT_DATE)";
+        System.out.println("\nInserting: " + sqlString);
+        stmt.execute(sqlString);
+          return "success";
+      } catch (SQLException e) {
+          logException(e);
+          return "failure";
+      } finally {
+          closeAll();
+      }
+  }
+
+  public String addKredyt(int client_id, String uslugaKredyt_id, double wplata, String rachunek_numer) 
+    throws SQLException {
+
+      try {
+          connHandler.getDBConnection();
+          stmt =
+  connHandler.conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
+          sqlString =
+                  "INSERT INTO Kredyt VALUES (LOKATA_SEQ.nextval, '" +
+                  connHandler.getL_userid() + "' ,'" + uslugaKredyt_id + "','" + client_id + "', " + wplata + ", CURRENT_DATE, '0')";
+          System.out.println("\nInserting: " + sqlString);
+          stmt.execute(sqlString);
+          
+          
+        DecimalFormat df = new DecimalFormat();
+        DecimalFormatSymbols dfs = df.getDecimalFormatSymbols();
+        // make sure it's a '.'
+        dfs.setDecimalSeparator(',');
+        df.setDecimalFormatSymbols(dfs);
+        sqlString =
+                "INSERT INTO Transakcja VALUES (TRANSAKCJA_SEQ.nextval, '" +  rachunek_numer + "', " + wplata + ",'" + "in" + "', 'brak','" + 
+                "Kredyt nr ' || LOKATA_SEQ.currval , 'brak', 'brak', 'brak' , CURRENT_DATE)";
+        System.out.println("\nInserting: " + sqlString);
+        stmt.execute(sqlString);
+          return "success";
+      } catch (SQLException e) {
+          logException(e);
+          return "failure";
+      } finally {
+          closeAll();
+      }
+  }
+  
   public String addFundusz(String inwestycja_nazwa, double wplata, String rachunek_numer) 
     throws SQLException {
 
@@ -310,8 +431,39 @@ connHandler.conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONC
       } finally {
           closeAll();
       }
+  }
+  
+  public String addFunduszByClientId(int client_id, String inwestycja_nazwa, double wplata, String rachunek_numer) 
+    throws SQLException {
 
-
+      try {
+          connHandler.getDBConnection();
+          stmt =
+  connHandler.conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
+          sqlString =
+                  "INSERT INTO Fundusz VALUES (FUNDUSZ_SEQ.nextval, '" + inwestycja_nazwa + "'," +
+                  client_id + ", " + wplata + ", CURRENT_DATE)";
+          System.out.println("\nInserting: " + sqlString);
+          stmt.execute(sqlString);
+          
+          
+        DecimalFormat df = new DecimalFormat();
+        DecimalFormatSymbols dfs = df.getDecimalFormatSymbols();
+        // make sure it's a '.'
+        dfs.setDecimalSeparator(',');
+        df.setDecimalFormatSymbols(dfs);
+        sqlString =
+                "INSERT INTO Transakcja VALUES (TRANSAKCJA_SEQ.nextval, '" +  rachunek_numer + "', " + wplata + ",'" + "out" + "', 'brak','" + 
+                "Fundusz nr ' || FUNDUSZ_SEQ.currval , 'brak', 'brak', 'brak' , CURRENT_DATE)";
+        System.out.println("\nInserting: " + sqlString);
+        stmt.execute(sqlString);
+          return "success";
+      } catch (SQLException e) {
+          logException(e);
+          return "failure";
+      } finally {
+          closeAll();
+      }
   }
 
     public String deleteLokataById(int id, String rachunek_numer) throws SQLException {
@@ -427,6 +579,22 @@ connHandler.conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONC
       return rset;
   }
     
+  public ResultSet getUslugaKredyt() throws SQLException {
+      try {
+          connHandler.getDBConnection();
+          stmt =
+  connHandler.conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
+          query = "SELECT ident, nazwa, oprocentowanie " +
+              "FROM UslugaKredyt ";
+          
+          System.out.println("\nExecuting query: " + query);
+          rset = stmt.executeQuery(query);
+      } catch (SQLException e) {
+          logException(e);
+      }
+      return rset;
+  }
+  
   //Funkcja sluzaca do wypenienia dynamicznego
   //listy z zawodami przy wstawianiu
   //nowego pracownika
@@ -460,6 +628,19 @@ connHandler.conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONC
       return rset;
   }
 
+  public ResultSet getRachunkiByClientId(int client_id) throws SQLException {
+      try {
+          connHandler.getDBConnection();
+          stmt =
+  connHandler.conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
+          query = "SELECT * FROM Rachunek WHERE  klient_ident = " + client_id;
+          System.out.println("\nExecuting query: " + query);
+          rset = stmt.executeQuery(query);
+      } catch (SQLException e) {
+          logException(e);
+      }
+      return rset;
+  }
 
   public void closeAll() {
       if (rset != null) {

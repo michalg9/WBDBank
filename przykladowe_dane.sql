@@ -8,7 +8,7 @@ VALUES
 
 INSERT INTO Pracownik
 VALUES
-(1, NULL, 'Adam', 'Adamski', 'Menager', 'abc', 5000);
+(1, NULL, 'Adam', 'Adamski', 'Manager', 'abc', 5000);
 
 INSERT INTO Pracownik
 VALUES
